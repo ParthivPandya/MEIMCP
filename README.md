@@ -4,7 +4,24 @@ A production-grade, bug-free Model Context Protocol (MCP) server providing a uni
 
 This server allows AI clients (like VS Code/Copilot, Cursor, Claude, or custom agents) to securely interact with your engineering tools to perform complex tasks like Root Cause Analysis (RCA) on pipeline failures.
 
-## Features
+## 🌟 The Vision: Why is this helpful?
+
+Most AI coding assistants live purely in the codebase. But engineering problems rarely exist only in the code—they span across CI/CD pipelines, live infrastructure, logs, and internal documentation.
+
+Instead of building separate chatbots or plugins for every tool, **MEI-MCP** exposes a single, secure endpoint that allows your AI to become an **SRE and DevOps expert**. 
+
+### Example Use Case
+When a developer asks their AI: > *"Why did pipeline #48291 fail?"*
+
+Using MEI-MCP, the AI will autonomously:
+1. Fetch the pipeline execution and build logs from **Azure DevOps**.
+2. Identify the failure signature (e.g., OOMKilled).
+3. Inspect live infrastructure health in **Azure Kubernetes Service (AKS)**.
+4. Query **Azure Monitor / Log Analytics** for application exceptions.
+5. Search the **Azure DevOps Wiki** for known runbooks regarding this specific failure.
+6. Present the developer with a correlated root-cause analysis, and offer to **safely restart the pod** or **create a bug**.
+
+## 🚀 Features
 
 - **MCP v2 Compliant**: Built on `@modelcontextprotocol/server` with Streamable HTTP transport via Express.
 - **Strict Authorization**: Three-level auth model (Tool Permission, Resource RBAC, Environment Policy) via Microsoft Entra ID.
