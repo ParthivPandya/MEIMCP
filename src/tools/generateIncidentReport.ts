@@ -25,9 +25,9 @@ export function registerGenerateIncidentReportTool(server: McpServer): void {
     'generate_incident_report',
     {
       description: 'Generate a structured markdown incident report for an outage.',
-      inputSchema: generateIncidentReportSchema,
+      inputSchema: generateIncidentReportSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as GenerateIncidentReportArgs;
       

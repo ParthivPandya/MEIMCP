@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { loadConfig, isDevelopment } from './config/configuration.js';
 import { EntraTokenValidator } from './auth/entra.js';
+import { requireAuthorization } from './auth/authorization.js';
 import { createMeiServer } from './factory.js';
 import { initLogger, createRequestLogger, logSecurityEvent } from './audit/auditLogger.js';
 import { initTelemetry, shutdownTelemetry } from './audit/telemetry.js';
@@ -20,6 +21,7 @@ const config = loadConfig();
 const logger = initLogger();
 initTelemetry();
 
+// 2. Auth initialization
 const tokenValidator = new EntraTokenValidator();
 
 // ── 2. Express Setup ─────────────────────────────────────────────────────────

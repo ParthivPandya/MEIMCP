@@ -1,56 +1,29 @@
 // ==============================================================================
-// MEI-MCP — Prompts Registry
+// MEI-MCP — MCP Prompt Registry
 // ==============================================================================
 
-import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/server';
+import { z } from 'zod';
 
 export function registerAllPrompts(server: McpServer): void {
-  // 1. Pipeline Investigation Prompt
-  server.registerPrompt(
-    'investigate-pipeline',
+  // server.registerPrompt(
+    'investigate_incident',
     {
-      title: 'Investigate Pipeline Failure',
-      description: 'Start a guided investigation of a pipeline failure',
-      argsSchema: z.object({
-        organization: z.string().describe('Azure DevOps organization'),
-        project: z.string().describe('Azure DevOps project'),
-        runId: z.string().describe('Failed pipeline run ID'),
-      }),
+      serviceName: z.string().describe('The name of the service experiencing the incident'),
+      severity: z.string().describe('The severity of the incident (e.g. Sev1, Sev2)'),
     },
-    ({ organization, project, runId }) => ({
-      messages: [
-        {
-          role: 'user',
-          content: {
-            type: 'text',
-            text: `Please investigate the pipeline failure in run ${runId} for project ${project} in organization ${organization}.\n\nUse the \`investigate_pipeline_failure\` tool to gather evidence, identify the root cause, and suggest remediation steps. Then summarize the findings for me.`,
-          },
-        },
-      ],
-    })
-  );
-
-  // 2. Knowledge Search Prompt
-  server.registerPrompt(
-    'find-known-solution',
-    {
-      title: 'Find Known Solution',
-      description: 'Search engineering knowledge for solutions to an error',
-      argsSchema: z.object({
-        errorMessage: z.string().describe('The error message or signature'),
-      }),
-    },
-    ({ errorMessage }) => ({
-      messages: [
-        {
-          role: 'user',
-          content: {
-            type: 'text',
-            text: `I'm seeing the following error:\n\n\`\`\`\n${errorMessage}\n\`\`\`\n\nPlease use the \`search_engineering_knowledge\` tool to find any known solutions, runbooks, or past incidents related to this error.`,
-          },
-        },
-      ],
-    })
+    (args: { serviceName: string, severity: string }) => {
+      return {
+        messages: [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: `We are currently experiencing a ${args.severity} incident involving the ${args.serviceName} service.\n\nPlease follow standard SRE protocol:\n1. Use the 'investigate_application_error' tool to check for recent exceptions.\n2. Use the 'analyze_recent_deployment' tool to check if a release caused this.\n3. If you find a failure signature, use 'find_similar_incidents' to locate runbooks.\n4. Do NOT attempt to mutate any resources without generating a remediation plan first.`
+            }
+          }
+        ]
+      };
+    }
   );
 }

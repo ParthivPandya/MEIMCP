@@ -24,9 +24,9 @@ export function registerFindSimilarIncidentsTool(server: McpServer): void {
     'find_similar_incidents',
     {
       description: 'Find similar historical incidents or postmortems matching a failure signature.',
-      inputSchema: findSimilarIncidentsSchema,
+      inputSchema: findSimilarIncidentsSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as FindSimilarIncidentsArgs;
       

@@ -21,10 +21,10 @@ export function registerInvestigateAksTool(server: McpServer): void {
   server.registerTool(
     'investigate_aks_workload',
     {
-      description: 'Investigate live AKS workloads for crashes, memory issues, or pod failures.',
-      inputSchema: investigateAksInputSchema,
+      description: 'Investigate a failing pod or workload in Azure Kubernetes Service.',
+      inputSchema: investigateAksInputSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as InvestigateAksArgs;
       

@@ -27,10 +27,10 @@ export function registerInvestigatePipelineTool(server: McpServer): void {
   server.registerTool(
     'investigate_pipeline_failure',
     {
-      description: 'Investigate a pipeline failure using telemetry, logs, and knowledge base.',
-      inputSchema: investigatePipelineInputSchema,
+      description: 'Investigate an Azure DevOps pipeline failure by analyzing logs and correlating with metrics.',
+      inputSchema: investigatePipelineInputSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as InvestigatePipelineArgs;
       

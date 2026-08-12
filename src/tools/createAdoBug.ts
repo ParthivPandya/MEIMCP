@@ -28,9 +28,9 @@ export function registerCreateAdoBugTool(server: McpServer): void {
     'create_ado_bug',
     {
       description: 'Create a bug work item in Azure DevOps.',
-      inputSchema: createAdoBugInputSchema,
+      inputSchema: createAdoBugInputSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as CreateAdoBugArgs;
 

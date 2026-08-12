@@ -26,9 +26,9 @@ export function registerAnalyzeDeploymentTool(server: McpServer): void {
     'analyze_recent_deployment',
     {
       description: 'Analyze recent deployments and correlate with observed issues.',
-      inputSchema: analyzeDeploymentInputSchema,
+      inputSchema: analyzeDeploymentInputSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as AnalyzeDeploymentArgs;
 

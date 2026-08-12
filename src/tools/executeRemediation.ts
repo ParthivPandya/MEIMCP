@@ -24,9 +24,9 @@ export function registerExecuteRemediationTool(server: McpServer): void {
     'execute_remediation',
     {
       description: 'Execute automated, self-healing remediation actions (Requires MUTATE permissions and approval in prod).',
-      inputSchema: executeRemediationInputSchema,
+      inputSchema: executeRemediationInputSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as ExecuteRemediationArgs;
       

@@ -26,9 +26,9 @@ export function registerSearchKnowledgeTool(server: McpServer): void {
     'search_engineering_knowledge',
     {
       description: 'Search the engineering knowledge base (Wiki, runbooks, incidents) using RAG.',
-      inputSchema: searchKnowledgeInputSchema,
+      inputSchema: searchKnowledgeInputSchema.shape,
     },
-    async (args: unknown, extra: { authInfo?: UserContext }) => {
+    async (args: unknown, extra: any) => {
       const userContext = extra.authInfo;
       const parsedArgs = args as SearchKnowledgeArgs;
 

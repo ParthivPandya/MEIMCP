@@ -1,98 +1,47 @@
 // ==============================================================================
-// MEI-MCP — Resources Registry
+// MEI-MCP — MCP Resource Registry
 // ==============================================================================
 
 import type { McpServer } from '@modelcontextprotocol/server';
-import { ResourceTemplate } from '@modelcontextprotocol/server';
-import { getToolCatalog } from '../policies/toolPolicy.js';
+import { logAuditEvent, logSecurityEvent } from '../audit/auditLogger.js';
+import { requireAuthorization } from '../auth/authorization.js';
+import type { UserContext } from '../auth/types.js';
 
 export function registerAllResources(server: McpServer): void {
-  // 1. Engineering Services Topology
-  server.registerResource(
-    'engineering_services',
-    'engineering://services',
-    {
-      title: 'Engineering Services Topology',
-      description: 'List of all tracked engineering services',
-      mimeType: 'application/json',
-    },
-    async (uri) => ({
-      contents: [
-        {
-          uri: uri.href,
-          mimeType: 'application/json',
-          text: JSON.stringify([
-            { id: 'auth-service', team: 'Identity', tier: 1 },
-            { id: 'payment-gateway', team: 'Commerce', tier: 1 },
-            { id: 'search-api', team: 'Discovery', tier: 2 },
-          ]),
-        },
-      ],
-    })
-  );
+  // server.registerResource(
+    'incident',
+    'incident://{id}',
+    async (uri: URL, extra: { authInfo?: UserContext }) => {
+      const id = uri.hostname;
+      
+      const userContext = extra.authInfo;
+      if (!userContext) {
+        throw new Error('Unauthenticated access to resource');
+      }
 
-  // 2. Available Environments
-  server.registerResource(
-    'engineering_environments',
-    'engineering://environments',
-    {
-      title: 'Engineering Environments',
-      description: 'List of available deployment environments and their policies',
-      mimeType: 'application/json',
-    },
-    async (uri) => ({
-      contents: [
-        {
-          uri: uri.href,
-          mimeType: 'application/json',
-          text: JSON.stringify([
-            { name: 'development', policy: 'open' },
-            { name: 'staging', policy: 'approval_required' },
-            { name: 'production', policy: 'strict_approval_required' },
-          ]),
-        },
-      ],
-    })
-  );
+      // 1. Authorization check
+      requireAuthorization(userContext, 'read_incident', id);
 
-  // 3. Server Configuration & Capabilities
-  server.registerResource(
-    'engineering_config',
-    'engineering://config',
-    {
-      title: 'Server Configuration & Capabilities',
-      description: 'Current tool catalog and enabled capabilities',
-      mimeType: 'application/json',
-    },
-    async (uri) => ({
-      contents: [
-        {
+      // 2. Audit logging
+      logAuditEvent({
+        timestamp: new Date().toISOString(),
+        requestId: userContext.correlationId,
+        userId: userContext.userId,
+        tenantId: userContext.tenantId,
+        tool: 'resource:incident',
+        permissionClass: 'READ' as any,
+        resource: id,
+        durationMs: 0,
+        success: true,
+      });
+
+      // 3. Return the content
+      return {
+        contents: [{
           uri: uri.href,
-          mimeType: 'application/json',
-          text: JSON.stringify({
-            version: '1.0.0',
-            tools: getToolCatalog(),
-          }),
-        },
-      ],
-    })
-  );
-  
-  // 4. Dynamic Service Resource Template
-  server.registerResource(
-    'engineering_service_detail',
-    new ResourceTemplate('engineering://services/{serviceName}', { list: undefined }),
-    {
-      title: 'Service Detail',
-      description: 'Detailed information for a specific service',
-      mimeType: 'application/json'
-    },
-    async (uri, { serviceName }) => ({
-      contents: [{ 
-        uri: uri.href, 
-        mimeType: 'application/json', 
-        text: JSON.stringify({ serviceId: serviceName, repo: `https://dev.azure.com/org/project/_git/${serviceName}` }) 
-      }]
-    })
+          text: `Historical Postmortem for Incident ${id}\n\nRoot Cause: Out of Memory...`
+        }]
+      };
+    }
   );
 }

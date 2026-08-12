@@ -18,6 +18,22 @@ import type {
 } from './types.js';
 import type { UserContext } from '../auth/types.js';
 
+// Simple in-memory cache to prevent rate-limiting for rapid GET requests
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const responseCache = new Map<string, { data: any, timestamp: number }>();
+
+function getCached<T>(key: string): T | null {
+  const cached = responseCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data as T;
+  }
+  return null;
+}
+
+function setCache(key: string, data: any): void {
+  responseCache.set(key, { data, timestamp: Date.now() });
+}
+
 const ADO_API_VERSION = '7.1';
 const MAX_RETRIES = 3;
 const RETRY_BASE_DELAY_MS = 1000;
@@ -109,12 +125,18 @@ export class AzureDevOpsConnector implements PipelineConnector {
     runId: number,
     context: UserContext
   ): Promise<PipelineRun> {
+    const cacheKey = `ado_run_${organization}_${project}_${runId}`;
+    const cached = getCached<PipelineRun>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const safeProject = encodeURIComponent(project);
     const url = `${this.getBaseUrl(organization)}/${safeProject}/_apis/build/builds/${runId}?api-version=${ADO_API_VERSION}`;
 
     const data = await this.makeRequest<Record<string, unknown>>(url, context);
 
-    return {
+    const result: PipelineRun = {
       id: data['id'] as number,
       name: (data['definition'] as Record<string, unknown>)?.['name'] as string ?? 'Unknown',
       status: this.mapBuildStatus(data['status'] as string),
@@ -126,6 +148,9 @@ export class AzureDevOpsConnector implements PipelineConnector {
       requestedBy: (data['requestedBy'] as Record<string, unknown>)?.['displayName'] as string | undefined,
       url: (data['_links'] as Record<string, Record<string, string>>)?.['web']?.['href'],
     };
+
+    setCache(cacheKey, result);
+    return result;
   }
 
   async getLogs(
