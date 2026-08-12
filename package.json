@@ -1,0 +1,57 @@
+{
+  "name": "mei-mcp",
+  "version": "1.0.0",
+  "description": "Microsoft Engineering Intelligence MCP — Enterprise AI Engineering, DevOps & SRE Platform",
+  "type": "module",
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:security": "vitest run tests/security",
+    "test:watch": "vitest",
+    "lint": "eslint src/ tests/ --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@azure/arm-resources": "^8.0.0",
+    "@azure/identity": "latest",
+    "@azure/monitor-query": "latest",
+    "@azure/openai": "latest",
+    "@azure/search-documents": "latest",
+    "@kubernetes/client-node": "^2.0.0",
+    "@modelcontextprotocol/express": "latest",
+    "@modelcontextprotocol/node": "latest",
+    "@modelcontextprotocol/server": "latest",
+    "@opentelemetry/api": "latest",
+    "@opentelemetry/exporter-metrics-otlp-http": "latest",
+    "@opentelemetry/sdk-metrics": "latest",
+    "@opentelemetry/sdk-node": "latest",
+    "@opentelemetry/sdk-trace-node": "latest",
+    "azure-devops-node-api": "latest",
+    "express": "latest",
+    "jsonwebtoken": "latest",
+    "jwks-rsa": "latest",
+    "pino": "latest",
+    "uuid": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/express": "latest",
+    "@types/jsonwebtoken": "latest",
+    "@types/node": "latest",
+    "@types/uuid": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}

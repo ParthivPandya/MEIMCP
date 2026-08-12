@@ -1,0 +1,26 @@
+{
+  "name": "mei-copilot-extension",
+  "version": "1.0.0",
+  "description": "GitHub Copilot Chat Extension proxy for MEI-MCP",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@azure/openai": "latest",
+    "@modelcontextprotocol/client": "latest",
+    "dotenv": "latest",
+    "eventsource": "latest",
+    "express": "latest",
+    "openai": "^7.4.0",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/express": "latest",
+    "@types/node": "latest",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}
