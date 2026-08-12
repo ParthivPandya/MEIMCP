@@ -9,6 +9,8 @@ import { registerAnalyzeDeploymentTool } from './analyzeDeployment.js';
 import { registerCreateAdoBugTool } from './createAdoBug.js';
 import { registerInvestigateAksTool } from './investigateInfrastructure.js';
 import { registerExecuteRemediationTool } from './executeRemediation.js';
+import { registerFindSimilarIncidentsTool } from './findSimilarIncidents.js';
+import { registerGenerateIncidentReportTool } from './generateIncidentReport.js';
 
 /**
  * Register all available tools on the MCP server instance.
@@ -20,4 +22,6 @@ export function registerAllTools(server: McpServer): void {
   registerCreateAdoBugTool(server);
   registerInvestigateAksTool(server);
   registerExecuteRemediationTool(server);
+  registerFindSimilarIncidentsTool(server);
+  registerGenerateIncidentReportTool(server);
 }
